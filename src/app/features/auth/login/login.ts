@@ -16,6 +16,7 @@ export class Login {
   private fb = inject(FormBuilder);
   private authService = inject(AuthService);
   private router = inject(Router);
+  
 
   loading = signal(false);
   error = signal('');
@@ -32,6 +33,7 @@ export class Login {
       return;
     }
 
+    
     const { email, motDePasse } = this.form.value;
     this.loading.set(true);
     this.error.set('');
@@ -63,5 +65,7 @@ export class Login {
   togglePassword() { this.showPassword.update(v => !v); }
 
   goToRegister() { this.router.navigate(['/register']); }
-
+ goToForgotPassword() {
+    this.router.navigate(['/forgot-password']);
+  }
 }

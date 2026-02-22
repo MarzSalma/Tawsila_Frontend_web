@@ -1,6 +1,5 @@
-// src/app/app.routes.ts
 import { Routes } from '@angular/router';
-import { adminGuard, clientGuard, coursierGuard } from './core/guards/guards'; // ✅ chemin complet avec /guards
+import { adminGuard, clientGuard, coursierGuard } from './core/guards/guards';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -11,6 +10,12 @@ export const routes: Routes = [
   {
     path: 'register',
     loadComponent: () => import('./features/auth/register/register').then(m => m.Register)
+  },
+  {
+    path: 'forgot-password', // ✅ AVANT le **
+    loadComponent: () =>
+      import('./features/auth/forget-password/forgot-password')
+        .then(m => m.ForgotPassword)
   },
   {
     path: 'admin/dashboard',
@@ -27,5 +32,5 @@ export const routes: Routes = [
     loadComponent: () => import('./features/coursier/profile/profile').then(m => m.Profile),
     canActivate: [coursierGuard]
   },
-  { path: '**', redirectTo: '/login' }
+  { path: '**', redirectTo: '/login' } // ✅ toujours en dernier
 ];
