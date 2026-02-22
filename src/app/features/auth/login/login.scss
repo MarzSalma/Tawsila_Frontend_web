@@ -1,0 +1,151 @@
+:host {
+  display: block;
+  height: 100vh;
+  font-family: 'Inter', sans-serif;
+}
+
+.auth-container {
+  height: 100vh;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  background: white;
+}
+
+.login-card {
+  width: 100%;
+  max-width: 900px;
+  display: flex;
+  background: white;
+  border-radius: 18px;
+  box-shadow: 0 12px 40px rgba(15, 23, 42, 0.08);
+  overflow: hidden;
+}
+
+/* LEFT SIDE */
+.left-side {
+  flex: 1;
+  background: #111827;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  padding: 40px;
+  color: white;
+}
+
+.logo-section {
+  text-align: center;
+}
+
+.logo-section img {
+  width: 120px;
+  height: 120px;
+  object-fit: contain;
+  margin-bottom: 12px;
+}
+
+.logo-section h1 {
+  font-size: 28px;
+  font-weight: 600;
+}
+
+.logo-section p {
+  font-size: 14px;
+  color: #cbd5f1;
+}
+
+/* RIGHT SIDE */
+.right-side {
+  flex: 1;
+  padding: 50px;
+  display: flex;
+  flex-direction: column;
+  justify-content: center;
+}
+
+.input-group {
+  margin-bottom: 18px;
+}
+
+label {
+  display: block;
+  font-size: 13px;
+  margin-bottom: 6px;
+  color: #374151;
+}
+
+input {
+  width: 100%;
+  padding: 12px 14px;
+  border-radius: 10px;
+  border: 1px solid #e5e7eb;
+  font-size: 14px;
+}
+
+input:focus {
+  border-color: #2563eb;
+  box-shadow: 0 0 0 3px rgba(37, 99, 235, 0.12);
+  outline: none;
+}
+
+/* Button */
+button {
+  width: 100%;
+  padding: 12px;
+  border-radius: 10px;
+  background: #111827;
+  color: white;
+  border: none;
+  cursor: pointer;
+  font-weight: 500;
+}
+
+button:hover {
+  background: #1f2937;
+}
+
+/* Error */
+.alert-error {
+  background: #fff1f2;
+  border: 1px solid #fecdd3;
+  color: #b91c1c;
+  padding: 10px;
+  border-radius: 8px;
+  margin-bottom: 18px;
+  font-size: 13px;
+}
+
+/* Footer */
+.footer-link {
+  margin-top: 20px;
+  text-align: center;
+  font-size: 14px;
+}
+
+.footer-link span {
+  color: #6b7280;
+}
+
+.footer-link a {
+  color: #2563eb;
+  margin-left: 5px;
+  cursor: pointer;
+  font-weight: 500;
+}
+.form-title {
+  font-size: 22px;
+  font-weight: 600;
+  color: #111827;
+  margin-bottom: 4px;
+}
+
+.form-subtitle {
+  font-size: 14px;
+  color: #6b7280;
+  margin-bottom: 24px;
+}
+button:disabled {
+  background: #43474f;
+  cursor: not-allowed;
+  opacity: 0.7;
+}

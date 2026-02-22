@@ -1,0 +1,55 @@
+<div class="auth-container">
+
+  <div class="login-card">
+
+    <div class="left-side">
+      <div class="logo-section">
+        <img src="assets/images/logo.jpg" alt="Tawsila logo" class="logo">
+        <h1>Tawsila</h1>
+        <p>Precision Delivery Platform</p>
+      </div>
+    </div>
+
+    <div class="right-side">
+
+  <h2 class="form-title">Welcome back</h2>
+  <p class="form-subtitle">Sign in to continue</p>
+
+
+      <div class="alert-error" *ngIf="error()">
+        {{ error() }}
+      </div>
+
+      <form [formGroup]="form" (ngSubmit)="onSubmit()">
+
+        <div class="input-group">
+          <label>Email</label>
+          <input
+            type="email"
+            formControlName="email"
+            placeholder="Write Your Email">
+        </div>
+
+        <div class="input-group">
+          <label>Password</label>
+          <input
+            type="password"
+            formControlName="motDePasse"
+            placeholder="••••••••">
+        </div>
+<button type="submit" [disabled]="loading() || form.invalid">
+  {{ loading() ? 'Signing in...' : 'Sign In' }}
+</button>
+
+      </form>
+
+      <div class="footer-link">
+        <span>Don't have an account?</span>
+        <a (click)="goToRegister()">Create account</a>
+      </div>
+
+    </div>
+
+  </div>
+
+</div>
