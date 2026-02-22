@@ -1,17 +1,298 @@
-/* Global styles - Tawsila */
-@import url('https://fonts.googleapis.com/css2?family=Syne:wght@400;600;700;800&family=DM+Sans:wght@300;400;500&display=swap');
+/* ── Variables Mode Clair (défaut) ───────────────────────────── */
+:root {
+  /* Fonds — clairs en mode clair */
+  --bg-main:      #F5F6F8;   /* fond de page — très clair */
+  --bg-surface:   #FFFFFF;   /* cards, topbar — blanc */
+  --bg-surface2:  #F8F9FA;   /* fond secondaire — légèrement gris */
 
-*, *::before, *::after { 
-  box-sizing: border-box; 
-  margin: 0; 
-  padding: 0; 
+  /* Bordures — légères en mode clair */
+  --border:       #E5E7EB;
+  --border-light: #F0F0F0;
+
+  /* Textes — foncés en mode clair */
+  --text-primary:   #1C2833;  /* titre principal — très foncé */
+  --text-secondary: #374151;  /* texte normal — foncé */
+  --text-muted:     #9CA3AF;  /* texte discret — gris moyen */
+  --text-subtle:    #6B7280;  /* texte très discret */
+
+  /* Inputs — fond blanc, bordure claire */
+  --input-bg:     #FFFFFF;
+  --input-border: #E5E7EB;
+
+  /* Sidebar — foncée en mode clair (c'est voulu) */
+  --sidebar-bg:   #1C2833;
+
+  /* Topbar — blanche en mode clair */
+  --topbar-bg:    #FFFFFF;
+
+  /* Ombre — légère en mode clair */
+  --shadow: rgba(0,0,0,0.06);
+
+  /* Hero profil */
+  --hero-gradient: linear-gradient(135deg, #1C2833 0%, #2C3E50 100%);
+  --info-grid-bg:  #F0F0F0;
+
+  /* Grid infos */
+  --info-block-bg: #FFFFFF;
 }
 
-html, body {
-  height: 100%;
-  font-family: 'DM Sans', sans-serif;
-  background: #F5F6F8;
-  color: #1C2833;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
+/* ── Variables Mode Sombre — INVERSE du mode clair ───────────── */
+:root.dark {
+  /* Fonds — FONCÉS (là où c'était clair, maintenant c'est sombre) */
+  --bg-main:      #0D1117;   /* fond de page — très foncé */
+  --bg-surface:   #161B22;   /* cards, topbar — foncé */
+  --bg-surface2:  #1C2128;   /* fond secondaire — légèrement moins foncé */
+
+  /* Bordures — visibles mais discrètes sur fond sombre */
+  --border:       #30363D;
+  --border-light: #21262D;
+
+  /* Textes — CLAIRS (là où c'était foncé, maintenant c'est clair) */
+  --text-primary:   #E6EDF3;  /* titre principal — très clair */
+  --text-secondary: #CDD9E5;  /* texte normal — clair */
+  --text-muted:     #8B949E;  /* texte discret — gris clair */
+  --text-subtle:    #6E7681;  /* texte très discret */
+
+  /* Inputs — fond sombre, bordure visible */
+  --input-bg:     #1C2128;
+  --input-border: #30363D;
+
+  /* Sidebar — encore plus foncée en dark mode */
+  --sidebar-bg:   #0D1117;
+
+  /* Topbar — foncée (là où c'était blanc) */
+  --topbar-bg:    #161B22;
+
+  /* Ombre — plus marquée sur fond sombre */
+  --shadow: rgba(0,0,0,0.4);
+
+  /* Hero profil — plus sombre */
+  --hero-gradient: linear-gradient(135deg, #0D1117 0%, #161B22 100%);
+  --info-grid-bg:  #21262D;
+
+  /* Grid infos */
+  --info-block-bg: #161B22;
+}
+
+/* ════════════════════════════════════════════════════════════════
+   APPLICATION DU DARK MODE
+   ════════════════════════════════════════════════════════════════ */
+:root.dark {
+
+  body {
+    background: var(--bg-main);      /* fond sombre */
+    color: var(--text-primary);      /* texte clair */
+  }
+
+  /* ── Layout ────────────────────────────────────────────────── */
+  .profile-layout {
+    background: var(--bg-main);
+  }
+
+  /* ── Topbar : blanc → foncé ────────────────────────────────── */
+  .topbar {
+    background: var(--topbar-bg) !important;   /* foncé */
+    border-color: var(--border) !important;
+
+    .topbar-brand span { color: var(--text-primary); }  /* clair */
+    .menu-btn span     { background: var(--text-primary); }  /* barres claires */
+  }
+
+  /* ── Sidebar : déjà foncée, on l'assombrit encore ─────────── */
+  .sidebar {
+    background: var(--sidebar-bg);
+    border-right: 1px solid var(--border);
+  }
+
+  /* ── Profile card : blanc → foncé ──────────────────────────── */
+  .profile-card {
+    background: var(--bg-surface);
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+
+  .profile-hero {
+    background: var(--hero-gradient);
+  }
+
+  /* Grid infos : fond gris clair → fond gris foncé */
+  .info-grid    { background: var(--info-grid-bg); }
+  .info-block   { background: var(--info-block-bg); }
+
+  /* Labels : texte gris foncé → texte gris clair */
+  .info-label   { color: var(--text-muted); }
+  /* Valeurs : texte très foncé → texte très clair */
+  .info-value   { color: var(--text-primary); }
+
+  .section-title     { color: var(--text-secondary); }
+  .coursier-section  { border-color: var(--border-light); }
+
+  /* ── Boutons d'action ──────────────────────────────────────── */
+  /* btn-edit : fond très foncé → fond moins foncé (visible) */
+  .btn-edit {
+    background: var(--bg-surface2);
+    color: var(--text-primary);
+    border: 1px solid var(--border);
+    &:hover { background: var(--border); }
+  }
+
+  /* btn-password : fond blanc → fond foncé */
+  .btn-password {
+    background: var(--bg-surface);
+    color: var(--text-primary);
+    border-color: var(--border);
+    &:hover { border-color: var(--text-secondary); }
+  }
+
+  .action-buttons { border-color: var(--border-light); }
+
+  /* ── Form card : blanc → foncé ─────────────────────────────── */
+  .form-card {
+    background: var(--bg-surface);
+    box-shadow: 0 2px 12px var(--shadow);
+  }
+
+  /* ── Inputs : fond blanc, texte foncé → fond foncé, texte clair */
+  .field-group {
+    label { color: var(--text-secondary); }   /* label clair */
+
+    input, select {
+      background: var(--input-bg);            /* fond sombre */
+      border-color: var(--input-border);      /* bordure visible */
+      color: var(--text-primary);             /* texte clair */
+
+      &:focus {
+        border-color: #E8192C;
+        box-shadow: 0 0 0 3px rgba(232,25,44,0.2);
+      }
+      &::placeholder { color: var(--text-muted); }
+    }
+  }
+
+  .section-divider {
+    color: var(--text-secondary);
+    border-color: var(--border-light);
+  }
+
+  .field-divider { background: var(--border-light); }
+
+  /* ── En-têtes de page ──────────────────────────────────────── */
+  .page-header {
+    h1 { color: var(--text-primary); }   /* clair */
+    p  { color: var(--text-muted);    }  /* gris clair */
+  }
+
+  .back-btn { color: var(--text-secondary); }
+
+  /* ── Page Paramètres ───────────────────────────────────────── */
+  .settings-page    { background: var(--bg-main); }
+
+  .settings-header {
+    background: var(--topbar-bg);        /* foncé */
+    border-color: var(--border);
+    h1 { color: var(--text-primary); }
+    p  { color: var(--text-muted);    }
+  }
+
+  .back-btn {
+    background: var(--bg-surface2);
+    border-color: var(--border);
+    color: var(--text-primary);
+  }
+
+  /* Sections settings : blanc → foncé */
+  .settings-section {
+    background: var(--bg-surface);
+    box-shadow: 0 2px 10px var(--shadow);
+  }
+
+  .section-header {
+    border-color: var(--border);
+    h2 { color: var(--text-primary); }
+    p  { color: var(--text-muted);    }
+  }
+
+  /* Boutons langue */
+  .lang-btn {
+    background: var(--bg-surface2);
+    border-color: var(--border);
+
+    .lang-label { color: var(--text-primary); }
+    .lang-name  { color: var(--text-muted);   }
+
+    &:hover {
+      border-color: #E8192C;
+      background: rgba(232,25,44,0.1);
+    }
+    &.selected {
+      border-color: #E8192C;
+      background: rgba(232,25,44,0.12);
+      .lang-label { color: #E8192C; }
+    }
+  }
+
+  /* Lignes toggle */
+  .toggle-row {
+    &:hover { background: var(--bg-surface2); }
+  }
+  .toggle-label { color: var(--text-primary) !important; }  /* clair */
+  .toggle-desc  { color: var(--text-muted)   !important; }  /* gris clair */
+
+  .version-info p { color: var(--text-muted); }
+
+  /* ── Pages Login / Register ────────────────────────────────── */
+  .auth-container { background: var(--bg-main); }
+
+  /* card login : blanc → foncé */
+  .login-card {
+    background: var(--bg-surface);
+    box-shadow: 0 12px 40px var(--shadow);
+  }
+
+  .right-side { background: var(--bg-surface); }
+
+  /* Titres et sous-titres */
+  .form-title    { color: var(--text-primary); }
+  .form-subtitle { color: var(--text-muted);   }
+
+  /* Inputs login */
+  .input-group {
+    label { color: var(--text-secondary); }
+    input {
+      background: var(--input-bg);
+      border-color: var(--input-border);
+      color: var(--text-primary);
+      &::placeholder { color: var(--text-muted); }
+      &:focus { border-color: #2563eb; box-shadow: 0 0 0 3px rgba(37,99,235,0.2); }
+    }
+  }
+
+  .footer-link span { color: var(--text-muted); }
+  .forgot-link a    { color: var(--text-muted); }
+
+  /* ── Forgot password ────────────────────────────────────────── */
+  .step-badge {
+    background: rgba(37,99,235,0.15);
+    color: #93C5FD;
+    border-color: rgba(37,99,235,0.3);
+  }
+
+  /* Toast succès */
+  .toast-success {
+    background: #0D2818;
+    border-color: #166534;
+    color: #86EFAC;
+  }
+
+  /* Alert erreur */
+  .alert-error {
+    background: #1C0A0A;
+    border-color: #7F1D1D;
+    color: #FCA5A5;
+  }
+
+  /* Loading spinner */
+  .spinner {
+    border-color: var(--border);
+    border-top-color: #E8192C;
+  }
 }

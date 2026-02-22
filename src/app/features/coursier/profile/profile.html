@@ -1,1 +1,259 @@
-<p>profile works!</p>
+<div class="profile-layout">
+
+  <div class="overlay" [class.open]="sidebarOpen()" (click)="closeSidebar()"></div>
+
+  <!-- ── Sidebar ─────────────────────────────────────── -->
+  <aside class="sidebar" [class.open]="sidebarOpen()">
+    <div class="sidebar-header">
+      <div class="sidebar-avatar">{{ getInitials() }}</div>
+      <div>
+        <p class="sidebar-name">{{ user()?.prenom }} {{ user()?.nom }}</p>
+        <p class="sidebar-email">{{ user()?.email }}</p>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item" [class.active]="activeView() === 'profile'" (click)="setView('profile')">
+      
+        {{ t('monProfil') }}
+      </button>
+      
+      <button class="nav-item" (click)="goToSettings()">
+        {{ t('parametres') }}
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <span></span> {{ t('seDeconnecter') }}
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── Main content ─────────────────────────────────── -->
+  <div class="main-content">
+
+    <header class="topbar">
+      <button class="menu-btn" (click)="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar-brand">
+        <img src="assets/images/logo.jpg" alt="Tawsila" class="topbar-logo">
+        <span>Tawsila</span>
+      </div>
+      <div class="topbar-role">
+        <span class="role-badge"
+          [style.background]="getRoleBadge().color + '20'"
+          [style.color]="getRoleBadge().color">
+          {{ getRoleBadge().icon }} {{ getRoleBadge().label }}
+        </span>
+      </div>
+    </header>
+
+    <div class="page-loading" *ngIf="loading() && !user()">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="toast-success" *ngIf="saveSuccess()">
+      ✅ {{ t('modifEnregistrees') }}
+    </div>
+
+    <!-- ── VUE : Mon Profil ─────────────────────────── -->
+    <div class="page" *ngIf="activeView() === 'profile' && user()">
+      <div class="page-header">
+        <h1>{{ t('monProfil') }}</h1>
+        <p>{{ t('informationsPersonnelles') }}</p>
+      </div>
+
+      <div class="profile-card">
+        <div class="profile-hero">
+          <div class="avatar-circle" [style.background]="getRoleBadge().color">
+            <span>{{ getInitials() }}</span>
+          </div>
+          <div class="hero-info">
+            <h2>{{ user()?.prenom }} {{ user()?.nom }}</h2>
+            <p class="hero-email">{{ user()?.email }}</p>
+            <span class="role-pill"
+              [style.background]="getRoleBadge().color + '15'"
+              [style.color]="getRoleBadge().color"
+              [style.border]="'1px solid ' + getRoleBadge().color + '30'">
+              {{ getRoleBadge().icon }} {{ getRoleBadge().label }}
+            </span>
+          </div>
+        </div>
+
+        <div class="info-grid">
+          <div class="info-block">
+            <span class="info-label">{{ t('telephone') }}</span>
+            <span class="info-value">{{ user()?.telephone || '—' }}</span>
+          </div>
+          <div class="info-block">
+            <span class="info-label">{{ t('adresse') }}</span>
+            <span class="info-value">{{ user()?.address || '—' }}</span>
+          </div>
+        </div>
+
+        <div class="coursier-section" *ngIf="role === 'COURSIER'">
+          <h3 class="section-title">🚴 {{ t('informationsCoursier') }}</h3>
+          <div class="info-grid">
+            <div class="info-block">
+              <span class="info-label">{{ t('vehicule') }}</span>
+              <span class="info-value">{{ user()?.vehiculeType || '—' }}</span>
+            </div>
+            <div class="info-block">
+              <span class="info-label">{{ t('immatriculation') }}</span>
+              <span class="info-value">{{ user()?.immatriculation || '—' }}</span>
+            </div>
+            <div class="info-block">
+              <span class="info-label">{{ t('zoneLivraison') }}</span>
+              <span class="info-value">{{ user()?.zoneLivraison || '—' }}</span>
+            </div>
+            <div class="info-block">
+              <span class="info-label">{{ t('disponibilite') }}</span>
+              <span class="disponibilite-badge"
+                [class.dispo]="user()?.disponibilite === 'DISPONIBLE'"
+                [class.occupe]="user()?.disponibilite === 'OCCUPE'">
+                {{ user()?.disponibilite === 'DISPONIBLE' ? '🟢 ' + t('disponible') : '🔴 ' + t('occupe') }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn-edit" (click)="setView('editInfo')">
+             {{ t('modifierMesInformations') }}
+          </button>
+          <button class="btn-password" (click)="setView('editPassword')">
+             {{ t('changerMotDePasse') }}
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── VUE : Modifier infos ─────────────────────── -->
+    <div class="page" *ngIf="activeView() === 'editInfo'">
+      <div class="page-header">
+        <button class="back-btn" (click)="setView('profile')">←</button>
+        <h1>{{ t('modifierInfos') }}</h1>
+      </div>
+
+      <div class="form-card">
+        <div class="alert-error" *ngIf="error()"> {{ error() }}</div>
+
+        <form [formGroup]="infoForm" (ngSubmit)="saveInfo()">
+          <div class="fields-row">
+            <div class="field-group">
+              <label>{{ t('prenom') }}</label>
+              <input type="text" formControlName="prenom" [placeholder]="t('votrePrénom')"
+                [class.err]="infoForm.get('prenom')?.invalid && infoForm.get('prenom')?.touched">
+            </div>
+            <div class="field-group">
+              <label>{{ t('nom') }}</label>
+              <input type="text" formControlName="nom" [placeholder]="t('votreNom')"
+                [class.err]="infoForm.get('nom')?.invalid && infoForm.get('nom')?.touched">
+            </div>
+          </div>
+
+          <div class="field-group">
+            <label>{{ t('adresse') }}</label>
+            <input type="text" formControlName="address" [placeholder]="t('votreAdresse')">
+          </div>
+
+          <div class="field-group">
+            <label>{{ t('telephone') }}</label>
+            <input type="tel" formControlName="telephone" placeholder="+216 XX XXX XXX">
+          </div>
+
+          <ng-container *ngIf="role === 'COURSIER'">
+            <div class="section-divider">🚴 {{ t('informationsCoursier') }}</div>
+
+            <div class="field-group">
+              <label>{{ t('vehicule') }}</label>
+              <select formControlName="vehiculeType">
+                <option value="">{{ t('choisir') }}</option>
+                <option value="VELO">{{ t('velo') }}</option>
+                <option value="MOTO">{{ t('moto') }}</option>
+                <option value="VOITURE">{{ t('voiture') }}</option>
+                <option value="CAMIONNETTE">{{ t('camionnette') }}</option>
+              </select>
+            </div>
+
+            <div class="field-group">
+              <label>{{ t('immatriculation') }}</label>
+              <input type="text" formControlName="immatriculation" placeholder="TN-XXXX-XX">
+            </div>
+
+            <div class="field-group">
+              <label>{{ t('zoneLivraison') }}</label>
+              <input type="text" formControlName="zoneLivraison" [placeholder]="t('exZone')">
+            </div>
+
+            <div class="field-group">
+              <label>{{ t('disponibilite') }}</label>
+              <select formControlName="disponibilite">
+                <option value="DISPONIBLE">🟢 {{ t('disponible') }}</option>
+                <option value="OCCUPE">🔴 {{ t('occupe') }}</option>
+              </select>
+            </div>
+          </ng-container>
+
+          <button type="submit" class="btn-save" [disabled]="loading()">
+            <span *ngIf="!loading()"> {{ t('enregistrer') }}</span>
+            <span *ngIf="loading()"> {{ t('enregistrement') }}</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ── VUE : Changer mot de passe ──────────────── -->
+    <div class="page" *ngIf="activeView() === 'editPassword'">
+      <div class="page-header">
+        <button class="back-btn" (click)="setView('profile')">← </button>
+        <h1>{{ t('changerMotDePasse') }}</h1>
+      </div>
+
+      <div class="form-card form-card--narrow">
+        <div class="alert-error" *ngIf="error()"> {{ error() }}</div>
+
+        <form [formGroup]="passwordForm" (ngSubmit)="savePassword()">
+          <div class="field-group">
+            <label>{{ t('ancienMotDePasse') }}</label>
+            <input type="password" formControlName="ancienMotDePasse"
+              [placeholder]="t('motDePasseActuel')"
+              [class.err]="passwordForm.get('ancienMotDePasse')?.invalid && passwordForm.get('ancienMotDePasse')?.touched">
+            <span class="field-error"
+              *ngIf="passwordForm.get('ancienMotDePasse')?.invalid && passwordForm.get('ancienMotDePasse')?.touched">
+              {{ t('requis') }}
+            </span>
+          </div>
+
+          <div class="field-divider"></div>
+
+          <div class="field-group">
+            <label>{{ t('nouveauMotDePasse') }}</label>
+            <input type="password" formControlName="motDePasse"
+              [placeholder]="t('minimum6')"
+              [class.err]="passwordForm.get('motDePasse')?.invalid && passwordForm.get('motDePasse')?.touched">
+            <span class="field-error"
+              *ngIf="passwordForm.get('motDePasse')?.invalid && passwordForm.get('motDePasse')?.touched">
+              {{ t('min6') }}
+            </span>
+          </div>
+
+          <div class="field-group">
+            <label>{{ t('confirmerMotDePasse') }}</label>
+            <input type="password" formControlName="confirmer"
+              [placeholder]="t('repeterMotDePasse')"
+              [class.err]="passwordForm.get('confirmer')?.invalid && passwordForm.get('confirmer')?.touched">
+          </div>
+
+          <button type="submit" class="btn-save" [disabled]="loading()">
+            <span *ngIf="!loading()"> {{ t('changerMdp') }}</span>
+            <span *ngIf="loading()"> {{ t('modification') }}</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>

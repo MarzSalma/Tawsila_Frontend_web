@@ -18,8 +18,8 @@ export const routes: Routes = [
         .then(m => m.ForgotPassword)
   },
   {
-    path: 'admin/dashboard',
-    loadComponent: () => import('./features/admin/dashboard/dashboard').then(m => m.Dashboard),
+    path: 'admin/profile',
+    loadComponent: () => import('./features/admin/profile/profile').then(m => m.Profile),
     canActivate: [adminGuard]
   },
   {
@@ -32,5 +32,18 @@ export const routes: Routes = [
     loadComponent: () => import('./features/coursier/profile/profile').then(m => m.Profile),
     canActivate: [coursierGuard]
   },
+
+ {
+  path: 'settings',
+  loadComponent: () =>
+    import('./features/settings/settings').then(m => m.Settings)
+},
+
+
+
+
+
   { path: '**', redirectTo: '/login' } // ✅ toujours en dernier
+
+ 
 ];

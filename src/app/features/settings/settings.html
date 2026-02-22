@@ -1,0 +1,80 @@
+<div class="settings-page">
+
+  <header class="settings-header">
+    <button class="back-btn" (click)="goBack()">
+      <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2">
+        <path d="M19 12H5M12 19l-7-7 7-7"/>
+      </svg>
+    </button>
+    <div class="header-title">
+      <img src="assets/images/logo.jpg" alt="Tawsila" class="header-logo">
+      <div>
+        <h1>{{ t('parametres') }}</h1>
+        <p>Tawsila</p>
+      </div>
+    </div>
+  </header>
+
+  <div class="settings-content">
+
+    <!-- ── Langue ──────────────────────────────────────── -->
+    <div class="settings-section">
+      <div class="section-header">
+        
+        <div>
+          <h2>{{ t('langue') }}</h2>
+          <p>{{ t('choisirLangue') }}</p>
+        </div>
+      </div>
+
+      <div class="lang-grid">
+        <button *ngFor="let lang of languages"
+          class="lang-btn"
+          [class.selected]="selectedLang() === lang.code"
+          (click)="setLang(lang.code)">
+          <span class="lang-flag">{{ lang.flag }}</span>
+          <span class="lang-label">{{ lang.label }}</span>
+          <span class="lang-name">{{ lang.name }}</span>
+          <span class="check-icon" *ngIf="selectedLang() === lang.code">✓</span>
+        </button>
+      </div>
+    </div>
+
+    <!-- ── Apparence ────────────────────────────────────── -->
+    <div class="settings-section">
+      
+
+      <div class="toggle-row" (click)="toggleDarkMode()">
+        <div class="toggle-info">
+          <span class="toggle-icon">{{ darkMode() ? '🌙' : '☀️' }}</span>
+          <div>
+            <p class="toggle-label">{{ t('modeSombre') }}</p>
+            <p class="toggle-desc">{{ darkMode() ? t('themeSombreActif') : t('themeClairActif') }}</p>
+          </div>
+        </div>
+        <div class="toggle-switch" [class.on]="darkMode()">
+          <div class="toggle-thumb"></div>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── Notifications ─────────────────────────────────── -->
+    <div class="settings-section">
+    
+      <div class="toggle-row" (click)="toggleNotifications()">
+        <div class="toggle-info">
+          <span class="toggle-icon">{{ notifications() ? '🔔' : '🔕' }}</span>
+          <div>
+            <p class="toggle-label">{{ t('notifPush') }}</p>
+            <p class="toggle-desc">{{ notifications() ? t('notifActivees') : t('notifDesactivees') }}</p>
+          </div>
+        </div>
+        <div class="toggle-switch" [class.on]="notifications()">
+          <div class="toggle-thumb"></div>
+        </div>
+      </div>
+    </div>
+
+
+  </div>
+</div>

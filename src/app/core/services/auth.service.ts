@@ -59,7 +59,7 @@ export class AuthService {  // ✅ renommer Auth → AuthService
 
   redirectAfterLogin() {
     const role = this.getRole();
-    if (role === 'ADMIN') this.router.navigate(['/admin/dashboard']);
+    if (role === 'ADMIN') this.router.navigate(['/admin/profile']);
     else if (role === 'CLIENT') this.router.navigate(['/client/profile']);
     else if (role === 'COURSIER') this.router.navigate(['/coursier/profile']);
     else this.router.navigate(['/login']);
