@@ -9,7 +9,7 @@ import { TranslationService } from '../../../core/services/translation.service';
 type ActiveView = 'profile' | 'editInfo' | 'editPassword';
 
 @Component({
-  selector: 'app-profile',
+  selector: 'app-coursier-profile',
   standalone: true,
   imports: [CommonModule, ReactiveFormsModule],
   templateUrl: './profile.html',

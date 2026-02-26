@@ -43,5 +43,15 @@ export class UserService {
   );
 }
 
+getMerchantProfile() {
+  return this.http.get<any>(`${this.apiUrl}/merchants/me`);
+}
+
+updateMerchantProfile(data: any) {
+  return this.http.put<any>(`${this.apiUrl}/merchants/me`, data);
+}
+
+
+
 
 }

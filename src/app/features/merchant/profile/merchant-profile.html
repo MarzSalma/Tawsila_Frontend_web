@@ -1,0 +1,233 @@
+<div class="profile-layout">
+
+  <div class="overlay" [class.open]="sidebarOpen()" (click)="closeSidebar()"></div>
+
+  <!-- ── Sidebar ─────────────────────────────────────── -->
+  <aside class="sidebar" [class.open]="sidebarOpen()">
+    <div class="sidebar-header">
+      <div class="sidebar-avatar">{{ getInitials() }}</div>
+      <div>
+        <p class="sidebar-name">{{ merchant()?.nomEntreprise }}</p>
+        <p class="sidebar-email">{{ merchant()?.email }}</p>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item" [class.active]="activeView() === 'profile'" (click)="setView('profile')">
+        🏢 My Business
+      </button>
+      <button class="nav-item" (click)="goToSettings()">
+        ⚙️ Settings
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+        <span>🚪</span> Sign out
+      </button>
+    </div>
+  </aside>
+
+  <!-- ── Main content ─────────────────────────────────── -->
+  <div class="main-content">
+
+    <header class="topbar">
+      <button class="menu-btn" (click)="toggleSidebar()">
+        <span></span><span></span><span></span>
+      </button>
+      <div class="topbar-brand">
+        <img src="assets/images/logo.jpg" alt="Tawsila" class="topbar-logo">
+        <span>Tawsila</span>
+      </div>
+      <div class="topbar-role">
+        <span class="role-badge">🏪 Merchant</span>
+      </div>
+    </header>
+
+    <div class="page-loading" *ngIf="loading() && !merchant()">
+      <div class="spinner"></div>
+    </div>
+
+    <div class="toast-success" *ngIf="saveSuccess()">
+      ✅ Changes saved successfully
+    </div>
+
+    <!-- ── VUE : Mon Profil ─────────────────────────── -->
+    <div class="page" *ngIf="activeView() === 'profile' && merchant()">
+      <div class="page-header">
+        <h1>My Business Profile</h1>
+        <p>Manage your merchant account</p>
+      </div>
+
+      <div class="profile-card">
+
+        <!-- Hero -->
+        <div class="profile-hero">
+          <div class="avatar-circle">
+            <img *ngIf="merchant()?.imageUrl"
+              [src]="'http://localhost:8082' + merchant()?.imageUrl"
+              alt="Logo" class="avatar-img">
+            <span *ngIf="!merchant()?.imageUrl">{{ getInitials() }}</span>
+          </div>
+          <div class="hero-info">
+            <h2>{{ merchant()?.nomEntreprise }}</h2>
+            <p class="hero-email">{{ merchant()?.email }}</p>
+            <div class="hero-badges">
+              <span class="type-pill">{{ getTypeLabel() }}</span>
+              <span class="statut-pill"
+                [style.color]="getStatutBadge().color"
+                [style.background]="getStatutBadge().bg"
+                [style.border]="'1px solid ' + getStatutBadge().color + '40'">
+                {{ getStatutBadge().label }}
+              </span>
+            </div>
+          </div>
+        </div>
+
+        <!-- Infos -->
+        <div class="info-grid">
+          <div class="info-block">
+            <span class="info-label">Phone</span>
+            <span class="info-value">{{ merchant()?.telephone || '—' }}</span>
+          </div>
+          <div class="info-block">
+            <span class="info-label">Activity Type</span>
+            <span class="info-value">{{ getTypeLabel() }}</span>
+          </div>
+          <div class="info-block">
+            <span class="info-label">Address</span>
+            <span class="info-value">{{ merchant()?.address || '—' }}</span>
+          </div>
+          <div class="info-block">
+            <span class="info-label">City</span>
+            <span class="info-value">{{ merchant()?.city || '—' }}</span>
+          </div>
+          <div class="info-block">
+            <span class="info-label">Postal Code</span>
+            <span class="info-value">{{ merchant()?.codePostal || '—' }}</span>
+          </div>
+          <div class="info-block">
+            <span class="info-label">Status</span>
+            <span class="info-value" [style.color]="getStatutBadge().color" style="font-weight:600">
+              {{ getStatutBadge().label }}
+            </span>
+          </div>
+        </div>
+
+        <!-- Notice si en attente -->
+        <div class="pending-notice" *ngIf="merchant()?.statut === 'EN_ATTENTE'">
+          ⏳ Your account is pending admin validation. You'll be notified once approved.
+        </div>
+
+        <div class="action-buttons">
+          <button class="btn-edit" (click)="setView('editInfo')">
+            ✏️ Edit Business Info
+          </button>
+          <button class="btn-password" (click)="setView('editPassword')">
+            🔒 Change Password
+          </button>
+        </div>
+      </div>
+    </div>
+
+    <!-- ── VUE : Modifier infos ─────────────────────── -->
+    <div class="page" *ngIf="activeView() === 'editInfo'">
+      <div class="page-header">
+        <button class="back-btn" (click)="setView('profile')">←</button>
+        <h1>Edit Business Info</h1>
+      </div>
+
+      <div class="form-card">
+        <div class="alert-error" *ngIf="error()">{{ error() }}</div>
+
+        <form [formGroup]="infoForm" (ngSubmit)="saveInfo()">
+
+          <div class="section-label">🏪 Business</div>
+
+          <div class="field-group">
+            <label>Business Name</label>
+            <input type="text" formControlName="nomEntreprise" placeholder="Business name"
+              [class.err]="infoForm.get('nomEntreprise')?.invalid && infoForm.get('nomEntreprise')?.touched">
+          </div>
+
+          <div class="field-group">
+            <label>Activity Type</label>
+            <select formControlName="typeActivite">
+              <option value="">-- Select type --</option>
+              <option *ngFor="let opt of typeActiviteOptions" [value]="opt.value">{{ opt.label }}</option>
+            </select>
+          </div>
+
+          <div class="section-label">📞 Contact</div>
+
+          <div class="field-group">
+            <label>Phone</label>
+            <input type="tel" formControlName="telephone" placeholder="+216 XX XXX XXX">
+          </div>
+
+          <div class="section-label">📍 Address</div>
+
+          <div class="field-group">
+            <label>Street address</label>
+            <input type="text" formControlName="address" placeholder="Number, street...">
+          </div>
+
+          <div class="fields-row">
+            <div class="field-group">
+              <label>City</label>
+              <input type="text" formControlName="city" placeholder="Ex: Tunis, Sfax...">
+            </div>
+            <div class="field-group">
+              <label>Postal Code</label>
+              <input type="text" formControlName="codePostal" placeholder="Ex: 1000">
+            </div>
+          </div>
+
+          <button type="submit" class="btn-save" [disabled]="loading()">
+            <span *ngIf="!loading()">💾 Save Changes</span>
+            <span *ngIf="loading()">⏳ Saving...</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+    <!-- ── VUE : Changer mot de passe ──────────────── -->
+    <div class="page" *ngIf="activeView() === 'editPassword'">
+      <div class="page-header">
+        <button class="back-btn" (click)="setView('profile')">←</button>
+        <h1>Change Password</h1>
+      </div>
+
+      <div class="form-card form-card--narrow">
+        <div class="alert-error" *ngIf="error()">{{ error() }}</div>
+
+        <form [formGroup]="passwordForm" (ngSubmit)="savePassword()">
+          <div class="field-group">
+            <label>Current Password</label>
+            <input type="password" formControlName="ancienMotDePasse" placeholder="Current password"
+              [class.err]="passwordForm.get('ancienMotDePasse')?.invalid && passwordForm.get('ancienMotDePasse')?.touched">
+          </div>
+
+          <div class="field-divider"></div>
+
+          <div class="field-group">
+            <label>New Password</label>
+            <input type="password" formControlName="motDePasse" placeholder="Minimum 6 characters"
+              [class.err]="passwordForm.get('motDePasse')?.invalid && passwordForm.get('motDePasse')?.touched">
+          </div>
+
+          <div class="field-group">
+            <label>Confirm New Password</label>
+            <input type="password" formControlName="confirmer" placeholder="Repeat new password">
+          </div>
+
+          <button type="submit" class="btn-save" [disabled]="loading()">
+            <span *ngIf="!loading()">🔒 Update Password</span>
+            <span *ngIf="loading()">⏳ Updating...</span>
+          </button>
+        </form>
+      </div>
+    </div>
+
+  </div>
+</div>

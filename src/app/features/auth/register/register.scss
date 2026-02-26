@@ -189,3 +189,43 @@ form button:disabled {
   cursor: pointer;
   font-weight: 500;
 }
+/* Merchant box */
+.merchant-box {
+  margin-top: 30px;
+  text-align: center;
+}
+
+.merchant-title {
+  font-size: 15px;
+  color: #9ca3af;
+  margin-bottom: 10px;
+}
+
+.merchant-btn {
+  background: #999a9c;
+  color: white;
+  border: none;
+  padding: 12px 18px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: 0.2s;
+}
+
+.merchant-btn:hover {
+  background: #3c4456;
+}
+
+/* courier link under button */
+.courier-link {
+  display: block;
+  margin-top: 12px;
+  font-size: 13.5px;
+  color: #2563eb;
+  cursor: pointer;
+  text-decoration: none;
+}
+
+.courier-link:hover {
+  text-decoration: underline;
+}

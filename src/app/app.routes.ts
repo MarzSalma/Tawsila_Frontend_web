@@ -1,5 +1,5 @@
 import { Routes } from '@angular/router';
-import { adminGuard, clientGuard, coursierGuard } from './core/guards/guards';
+import { adminGuard, clientGuard, coursierGuard, merchantGuard } from './core/guards/guards';
 
 export const routes: Routes = [
   { path: '', redirectTo: '/login', pathMatch: 'full' },
@@ -12,10 +12,12 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/register/register').then(m => m.Register)
   },
   {
-    path: 'forgot-password', // ✅ AVANT le **
-    loadComponent: () =>
-      import('./features/auth/forget-password/forgot-password')
-        .then(m => m.ForgotPassword)
+    path: 'register-merchant', // ✅
+    loadComponent: () => import('./features/auth/register-merchant/register-merchant').then(m => m.RegisterMerchant)
+  },
+  {
+    path: 'forgot-password',
+    loadComponent: () => import('./features/auth/forget-password/forgot-password').then(m => m.ForgotPassword)
   },
   {
     path: 'admin/profile',
@@ -32,18 +34,14 @@ export const routes: Routes = [
     loadComponent: () => import('./features/coursier/profile/profile').then(m => m.Profile),
     canActivate: [coursierGuard]
   },
-
- {
-  path: 'settings',
-  loadComponent: () =>
-    import('./features/settings/settings').then(m => m.Settings)
-},
-
-
-
-
-
-  { path: '**', redirectTo: '/login' } // ✅ toujours en dernier
-
- 
+  {
+    path: 'merchant/profile', // ✅
+    loadComponent: () => import('./features/merchant/profile/merchant-profile').then(m => m.MerchantProfile),
+    canActivate: [merchantGuard]
+  },
+  {
+    path: 'settings',
+    loadComponent: () => import('./features/settings/settings').then(m => m.Settings)
+  },
+  { path: '**', redirectTo: '/login' }
 ];
