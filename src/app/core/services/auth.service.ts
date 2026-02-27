@@ -118,4 +118,9 @@ export class AuthService {
     else if (role === 'MERCHANT') this.router.navigate(['/merchant/profile']); // ✅
     else this.router.navigate(['/login']);
   }
+
+  getCurrentUser(): any {
+  const user = localStorage.getItem('user');
+  return user ? JSON.parse(user) : null;
+}
 }

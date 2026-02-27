@@ -1,0 +1,245 @@
+<div class="merchants-layout">
+
+  <!-- ① OVERLAY -->
+  <div class="overlay" [class.open]="sidebarOpen()" (click)="closeSidebar()"></div>
+
+  <!-- ② SIDEBAR — directement dans merchants-layout (même structure que all-couriers) -->
+  <aside class="sidebar" [class.open]="sidebarOpen()">
+   
+    <div class="sidebar-header">
+      <div class="sidebar-avatar">{{ getInitialsUser() }}</div>
+      <div>
+        <p class="sidebar-name">{{ user()?.prenom }} {{ user()?.nom }}</p>
+        <p class="sidebar-email">{{ user()?.email }}</p>
+      </div>
+    </div>
+
+    <nav class="sidebar-nav">
+      <button class="nav-item" (click)="goToProfile()">
+        Mon Profil
+      </button>
+      <button class="nav-item" (click)="goToCouriers()">
+        Couriers
+      </button>
+      <!-- Merchants est actif sur cette page -->
+      <button class="nav-item active">
+        Merchants
+      </button>
+      <button class="nav-item" (click)="goToSettings()">
+        Paramètres
+      </button>
+    </nav>
+
+    <div class="sidebar-footer">
+      <button class="logout-btn" (click)="logout()">
+         Se déconnecter
+      </button>
+    </div>
+  </aside>
+
+  <!-- ③ MAIN CONTENT -->
+  <div class="main-content">
+
+    <!-- Topbar -->
+    <header class="topbar">
+      <div class="topbar-left">
+        <button class="menu-btn" (click)="toggleSidebar()">
+          <span></span><span></span><span></span>
+        </button>
+        <div class="brand">
+          <img src="assets/images/logo.jpg" alt="Tawsila" class="brand-logo">
+          <span>Tawsila</span>
+        </div>
+      </div>
+      <div class="topbar-right">
+        <span class="admin-chip">Admin</span>
+        
+      </div>
+    </header>
+
+    <!-- Toast -->
+    <div class="toast"
+      *ngIf="toastMsg()"
+      [class.toast--success]="toastType() === 'success'"
+      [class.toast--error]="toastType() === 'error'">
+      {{ toastMsg() }}
+    </div>
+
+    <!-- Content -->
+    <main class="content">
+
+      <!-- Page header -->
+      <div class="page-header">
+        <div>
+          <h1>Merchants Management</h1>
+          <p>Review merchant applications and grant or deny access</p>
+        </div>
+        <button class="btn-refresh" (click)="loadMerchants()" [disabled]="loading()">
+          🔄 
+        </button>
+      </div>
+
+      <!-- Stats -->
+      <div class="stats-row" *ngIf="!loading() && merchants().length > 0">
+        <div class="stat-card">
+          <span class="stat-num">{{ merchants().length }}</span>
+          <span class="stat-label">Total</span>
+        </div>
+        <div class="stat-card stat--pending">
+          <span class="stat-num">{{ pendingCount() }}</span>
+          <span class="stat-label"> Pending</span>
+        </div>
+        <div class="stat-card stat--validated">
+          <span class="stat-num">{{ validatedCount() }}</span>
+          <span class="stat-label"> Validated</span>
+        </div>
+        <div class="stat-card stat--suspended">
+          <span class="stat-num">{{ suspendedCount() }}</span>
+          <span class="stat-label"> Suspended</span>
+        </div>
+      </div>
+
+      <!-- Filter tabs -->
+      <div class="filter-tabs">
+        <button [class.active]="filter() === 'ALL'"        (click)="filter.set('ALL')">
+          All <span class="tab-badge">{{ merchants().length }}</span>
+        </button>
+        <button [class.active]="filter() === 'EN_ATTENTE'" (click)="filter.set('EN_ATTENTE')">
+           Pending
+          <span class="tab-badge tab-badge--pending" *ngIf="pendingCount() > 0">{{ pendingCount() }}</span>
+        </button>
+        <button [class.active]="filter() === 'VALIDE'"     (click)="filter.set('VALIDE')">
+           Validated <span class="tab-badge">{{ validatedCount() }}</span>
+        </button>
+        <button [class.active]="filter() === 'SUSPENDU'"   (click)="filter.set('SUSPENDU')">
+           Suspended <span class="tab-badge">{{ suspendedCount() }}</span>
+        </button>
+      </div>
+
+      <!-- Loading -->
+      <div class="loading-box" *ngIf="loading()">
+        <div class="spinner"></div>
+        <p>Loading merchants...</p>
+      </div>
+
+      <!-- Empty -->
+      <div class="empty-box" *ngIf="!loading() && filteredMerchants().length === 0">
+        <span>🏪</span>
+        <p>No merchants in this category</p>
+      </div>
+
+      <!-- ── Merchant cards ──────────────────────────────────── -->
+      <div class="cards-grid" *ngIf="!loading() && filteredMerchants().length > 0">
+
+        <div class="merchant-card"
+             *ngFor="let m of filteredMerchants()"
+             [class.card--pending]="m.statut === 'EN_ATTENTE'"
+             [class.card--validated]="m.statut === 'VALIDE'"
+             [class.card--suspended]="m.statut === 'SUSPENDU'">
+
+          <!-- Header -->
+          <div class="card-head">
+            <div class="avatar">
+              <img *ngIf="m.imageUrl"
+                [src]="'http://localhost:8082' + m.imageUrl"
+                alt="Logo" class="avatar-img">
+              <span *ngIf="!m.imageUrl" class="avatar-initials">{{ getInitials(m) }}</span>
+            </div>
+            <div class="merchant-identity">
+              <h3>{{ m.nomEntreprise }}</h3>
+              <span class="type-tag">{{ getTypeLabel(m.typeActivite) }}</span>
+            </div>
+            <div class="statut-badge"
+              [style.color]="getStatutBadge(m.statut).color"
+              [style.background]="getStatutBadge(m.statut).bg"
+              [style.border]="'1px solid ' + getStatutBadge(m.statut).border">
+              {{ getStatutBadge(m.statut).label }}
+            </div>
+          </div>
+
+          <!-- Info grid : 2 cols × 3 lignes -->
+          <div class="info-grid">
+            <div class="info-cell">
+              <span class="info-label">Email</span>
+              <span class="info-val">{{ m.email || '—' }}</span>
+            </div>
+            <div class="info-cell">
+              <span class="info-label"> Phone</span>
+              <span class="info-val">{{ m.telephone || '—' }}</span>
+            </div>
+            <div class="info-cell">
+              <span class="info-label">City</span>
+              <span class="info-val">{{ m.city || '—' }}</span>
+            </div>
+            <div class="info-cell">
+              <span class="info-label">Postal code</span>
+              <span class="info-val">{{ m.codePostal || '—' }}</span>
+            </div>
+            <div class="info-cell info-cell--wide">
+              <span class="info-label"> Address</span>
+              <span class="info-val">{{ m.address || '—' }}</span>
+            </div>
+          </div>
+
+          <!-- ── Action buttons ─────────────────────────────── -->
+          <div class="card-actions">
+
+            <!-- EN_ATTENTE → ✅ Validate + 🚫 Refuse -->
+            <ng-container *ngIf="m.statut === 'EN_ATTENTE'">
+              <div class="access-status pending-status">
+                 Awaiting admin decision
+              </div>
+              <div class="btn-group">
+                <button class="btn-accept"
+                  [disabled]="actionLoading() !== null"
+                  (click)="valider(m.id)">
+                  <span class="btn-spinner" *ngIf="actionLoading() === m.id"></span>
+                  <span *ngIf="actionLoading() !== m.id">✅ Validate</span>
+                </button>
+                <button class="btn-refuse"
+                  [disabled]="actionLoading() !== null"
+                  (click)="suspendre(m.id)">
+                  <span class="btn-spinner" *ngIf="actionLoading() === m.id"></span>
+                  <span *ngIf="actionLoading() !== m.id">🚫 Refuse</span>
+                </button>
+              </div>
+            </ng-container>
+
+            <!-- VALIDE → 🔓 Access granted + 🚫 Suspend -->
+            <ng-container *ngIf="m.statut === 'VALIDE'">
+              <div class="access-status granted-status">
+                🔓 Access granted — merchant can login
+              </div>
+              <div class="btn-group">
+                <button class="btn-refuse"
+                  [disabled]="actionLoading() !== null"
+                  (click)="suspendre(m.id)">
+                  <span class="btn-spinner" *ngIf="actionLoading() === m.id"></span>
+                  <span *ngIf="actionLoading() !== m.id">🚫 Suspend account</span>
+                </button>
+              </div>
+            </ng-container>
+
+            <!-- SUSPENDU → 🔒 Access denied + ✅ Reactivate -->
+            <ng-container *ngIf="m.statut === 'SUSPENDU'">
+              <div class="access-status denied-status">
+                🔒 Account suspended — cannot login
+              </div>
+              <div class="btn-group">
+                <button class="btn-accept"
+                  [disabled]="actionLoading() !== null"
+                  (click)="valider(m.id)">
+                  <span class="btn-spinner" *ngIf="actionLoading() === m.id"></span>
+                  <span *ngIf="actionLoading() !== m.id">✅ Reactivate</span>
+                </button>
+              </div>
+            </ng-container>
+
+          </div>
+        </div>
+
+      </div>
+    </main>
+  </div>
+
+</div>

@@ -18,38 +18,37 @@ type ActiveView = 'profile' | 'editInfo' | 'editPassword';
 export class Profile implements OnInit {
   private authService = inject(AuthService);
   private userService = inject(UserService);
-  private fb = inject(FormBuilder);
-  private router = inject(Router);
+  private fb          = inject(FormBuilder);
+  private router      = inject(Router);
   tr = inject(TranslationService);
 
   sidebarOpen = signal(false);
-  activeView = signal<ActiveView>('profile');
-  loading = signal(false);
+  activeView  = signal<ActiveView>('profile');
+  loading     = signal(false);
   saveSuccess = signal(false);
-  error = signal('');
-  user = signal<any>(null);
+  error       = signal('');
+  user        = signal<any>(null);
 
   role = this.authService.getRole();
 
   infoForm = this.fb.group({
-    nom: ['', Validators.required],
-    prenom: ['', Validators.required],
-    address: ['', Validators.required],
-    telephone: ['', Validators.required],
-    vehiculeType: [''],
+    nom:             ['', Validators.required],
+    prenom:          ['', Validators.required],
+    address:         [''],
+    telephone:       [''],
+    vehiculeType:    [''],
     immatriculation: [''],
-    zoneLivraison: [''],
-    disponibilite: ['']
+    zoneLivraison:   [''],
+    disponibilite:   ['']
   });
 
   passwordForm = this.fb.group({
     ancienMotDePasse: ['', [Validators.required, Validators.minLength(6)]],
-    motDePasse: ['', [Validators.required, Validators.minLength(6)]],
-    confirmer: ['', Validators.required]
+    motDePasse:       ['', [Validators.required, Validators.minLength(6)]],
+    confirmer:        ['', Validators.required]
   });
 
   ngOnInit() {
-    // Apply saved settings on load
     this.tr.applyStoredSettings();
     this.loadProfile();
   }
@@ -59,23 +58,16 @@ export class Profile implements OnInit {
     const req = this.role === 'COURSIER'
       ? this.userService.getCoursierProfile()
       : this.userService.getMyProfile();
-
     req.subscribe({
-      next: (data) => {
-        this.user.set(data);
-        this.patchInfoForm(data);
-        this.loading.set(false);
-      },
+      next: (data) => { this.user.set(data); this.patchInfoForm(data); this.loading.set(false); },
       error: () => this.loading.set(false)
     });
   }
 
   patchInfoForm(data: any) {
     this.infoForm.patchValue({
-      nom: data.nom,
-      prenom: data.prenom,
-      address: data.address,
-      telephone: data.telephone,
+      nom: data.nom, prenom: data.prenom,
+      address: data.address, telephone: data.telephone,
       vehiculeType: data.vehiculeType || '',
       immatriculation: data.immatriculation || '',
       zoneLivraison: data.zoneLivraison || '',
@@ -87,56 +79,35 @@ export class Profile implements OnInit {
     if (this.infoForm.invalid) { this.infoForm.markAllAsTouched(); return; }
     this.loading.set(true);
     this.error.set('');
-
     const data = this.infoForm.value;
     const req = this.role === 'COURSIER'
       ? this.userService.updateCoursierProfile(data)
       : this.userService.updateProfile(data);
-
     req.subscribe({
       next: (updated) => {
-        this.user.set(updated);
-        this.loading.set(false);
-        this.saveSuccess.set(true);
-        this.activeView.set('profile');
+        this.user.set(updated); this.loading.set(false);
+        this.saveSuccess.set(true); this.activeView.set('profile');
         setTimeout(() => this.saveSuccess.set(false), 3000);
       },
-      error: () => {
-        this.loading.set(false);
-        this.error.set('Erreur lors de la mise à jour.');
-      }
+      error: () => { this.loading.set(false); this.error.set('Erreur lors de la mise à jour.'); }
     });
   }
 
   savePassword() {
     if (this.passwordForm.invalid) { this.passwordForm.markAllAsTouched(); return; }
     const { ancienMotDePasse, motDePasse, confirmer } = this.passwordForm.value;
-
-    if (motDePasse !== confirmer) {
-      this.error.set(this.tr.t('min6'));
-      return;
-    }
-
+    if (motDePasse !== confirmer) { this.error.set(this.tr.t('min6')); return; }
     this.loading.set(true);
     this.error.set('');
-
     this.userService.changePassword(ancienMotDePasse!, motDePasse!).subscribe({
       next: () => {
-        this.loading.set(false);
-        this.saveSuccess.set(true);
-        this.passwordForm.reset();
-        this.activeView.set('profile');
+        this.loading.set(false); this.saveSuccess.set(true);
+        this.passwordForm.reset(); this.activeView.set('profile');
         setTimeout(() => this.saveSuccess.set(false), 3000);
       },
-      error: () => {
-        this.loading.set(false);
-        this.error.set('Ancien mot de passe incorrect.');
-      }
+      error: () => { this.loading.set(false); this.error.set('Ancien mot de passe incorrect.'); }
     });
   }
-
-  toggleSidebar() { this.sidebarOpen.update(v => !v); }
-  closeSidebar() { this.sidebarOpen.set(false); }
 
   setView(view: ActiveView) {
     this.activeView.set(view);
@@ -144,19 +115,32 @@ export class Profile implements OnInit {
     this.closeSidebar();
   }
 
-  logout() { this.authService.logout(); }
+  toggleSidebar() { this.sidebarOpen.update(v => !v); }
+  closeSidebar()  { this.sidebarOpen.set(false); }
+  logout()        { this.authService.logout(); }
 
   goToSettings() {
     this.router.navigate(['/settings']);
     this.closeSidebar();
   }
 
+  // ✅ Admin : naviguer vers la page couriers séparée
+  goToCouriers() {
+    this.router.navigate(['/admin/all-couriers']);
+    this.closeSidebar();
+  }
+
   getRoleBadge() {
     const r = this.role;
-    if (r === 'ADMIN') return { label: this.tr.t('administrateur'), icon: '🛡️', color: '#7C3AED' };
-    if (r === 'COURSIER') return { label: this.tr.t('coursier'), icon: '🚴', color: '#0891B2' };
-    return { label: this.tr.t('client'), icon: '👤', color: '#059669' };
+    if (r === 'ADMIN')    return { label: this.tr.t('administrateur'), icon: '🛡️', color: '#7C3AED' };
+    if (r === 'COURSIER') return { label: this.tr.t('coursier'),       icon: '🚴', color: '#0891B2' };
+    return                       { label: this.tr.t('client'),         icon: '👤', color: '#059669' };
   }
+
+  goToMerchants() {
+  this.router.navigate(['/admin/all-merchants']);
+  this.closeSidebar();
+}
 
   getInitials() {
     const u = this.user();
@@ -164,5 +148,12 @@ export class Profile implements OnInit {
     return `${(u.prenom || '')[0] || ''}${(u.nom || '')[0] || ''}`.toUpperCase();
   }
 
+ 
+ 
   t(key: Parameters<typeof this.tr.t>[0]) { return this.tr.t(key); }
 }
+
+
+
+
+

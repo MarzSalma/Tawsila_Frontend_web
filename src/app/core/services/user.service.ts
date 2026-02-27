@@ -54,4 +54,29 @@ updateMerchantProfile(data: any) {
 
 
 
+getAllCoursiers() {
+  return this.http.get<any[]>(`${this.apiUrl}/coursiers`);
+}
+
+validerCoursier(id: number) {
+  return this.http.patch<any>(`${this.apiUrl}/coursiers/${id}/valider`, {});
+}
+
+refuserCoursier(id: number) {
+  return this.http.patch<any>(`${this.apiUrl}/coursiers/${id}/refuser`, {});
+}
+
+
+getAllMerchants() {
+  return this.http.get<any[]>(`${this.apiUrl}/merchants`);
+}
+
+validerMerchant(id: number) {
+  return this.http.patch<any>(`${this.apiUrl}/merchants/${id}/valider`, {});
+}
+
+suspendreMerchant(id: number) {
+  return this.http.patch<any>(`${this.apiUrl}/merchants/${id}/suspendre`, {});
+}
+
 }

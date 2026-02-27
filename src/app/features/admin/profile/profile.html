@@ -14,10 +14,18 @@
 
     <nav class="sidebar-nav">
       <button class="nav-item" [class.active]="activeView() === 'profile'" (click)="setView('profile')">
-      
         {{ t('monProfil') }}
       </button>
-      
+
+      <!-- ✅ Bouton Couriers — ADMIN uniquement — navigue vers page séparée -->
+      <button *ngIf="role === 'ADMIN'" class="nav-item" (click)="goToCouriers()">
+      Couriers
+      </button>
+
+        <button *ngIf="role === 'ADMIN'" class="nav-item" (click)="goToMerchants()">
+    Merchants
+  </button>
+
       <button class="nav-item" (click)="goToSettings()">
         {{ t('parametres') }}
       </button>
@@ -121,10 +129,10 @@
 
         <div class="action-buttons">
           <button class="btn-edit" (click)="setView('editInfo')">
-             {{ t('modifierMesInformations') }}
+            {{ t('modifierMesInformations') }}
           </button>
           <button class="btn-password" (click)="setView('editPassword')">
-             {{ t('changerMotDePasse') }}
+            {{ t('changerMotDePasse') }}
           </button>
         </div>
       </div>
@@ -166,7 +174,6 @@
 
           <ng-container *ngIf="role === 'COURSIER'">
             <div class="section-divider">🚴 {{ t('informationsCoursier') }}</div>
-
             <div class="field-group">
               <label>{{ t('vehicule') }}</label>
               <select formControlName="vehiculeType">
@@ -177,17 +184,14 @@
                 <option value="CAMIONNETTE">{{ t('camionnette') }}</option>
               </select>
             </div>
-
             <div class="field-group">
               <label>{{ t('immatriculation') }}</label>
               <input type="text" formControlName="immatriculation" placeholder="TN-XXXX-XX">
             </div>
-
             <div class="field-group">
               <label>{{ t('zoneLivraison') }}</label>
               <input type="text" formControlName="zoneLivraison" [placeholder]="t('exZone')">
             </div>
-
             <div class="field-group">
               <label>{{ t('disponibilite') }}</label>
               <select formControlName="disponibilite">
@@ -226,9 +230,7 @@
               {{ t('requis') }}
             </span>
           </div>
-
           <div class="field-divider"></div>
-
           <div class="field-group">
             <label>{{ t('nouveauMotDePasse') }}</label>
             <input type="password" formControlName="motDePasse"
@@ -239,14 +241,12 @@
               {{ t('min6') }}
             </span>
           </div>
-
           <div class="field-group">
             <label>{{ t('confirmerMotDePasse') }}</label>
             <input type="password" formControlName="confirmer"
               [placeholder]="t('repeterMotDePasse')"
               [class.err]="passwordForm.get('confirmer')?.invalid && passwordForm.get('confirmer')?.touched">
           </div>
-
           <button type="submit" class="btn-save" [disabled]="loading()">
             <span *ngIf="!loading()"> {{ t('changerMdp') }}</span>
             <span *ngIf="loading()"> {{ t('modification') }}</span>

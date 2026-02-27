@@ -521,3 +521,222 @@
 
 
 @keyframes spin { to { transform: rotate(360deg); } }
+
+
+
+// ═══════════════════════════════════════════════════════════════
+// Ajouter à la FIN de profile.scss — styles pour la vue Couriers
+// ═══════════════════════════════════════════════════════════════
+
+// ── Sidebar : bouton Couriers ─────────────────────────────────
+.couriers-btn {
+  position: relative;
+
+  &.active {
+    background: rgba(8, 145, 178, 0.15);
+    color: white;
+  }
+}
+
+.pending-badge {
+  position: absolute;
+  right: 14px;
+  background: #E8192C;
+  color: white;
+  font-size: 10px;
+  font-weight: 700;
+  min-width: 18px;
+  height: 18px;
+  border-radius: 9px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 0 5px;
+}
+
+// ── Toast action ──────────────────────────────────────────────
+.toast-action {
+  position: fixed;
+  top: 80px; right: 24px;
+  background: #EFF6FF;
+  border: 1px solid #BFDBFE;
+  color: #1E40AF;
+  padding: 12px 20px;
+  border-radius: 10px;
+  font-size: 14px; font-weight: 500;
+  box-shadow: 0 4px 12px rgba(0,0,0,0.1);
+  z-index: 300;
+  animation: slideIn 0.3s ease;
+}
+
+// ── Filter tabs ───────────────────────────────────────────────
+.filter-tabs {
+  display: flex;
+  gap: 8px;
+  margin-bottom: 24px;
+  flex-wrap: wrap;
+
+  button {
+    padding: 8px 18px;
+    border-radius: 20px;
+    border: 1.5px solid #E5E7EB;
+    background: white;
+    color: #6B7280;
+    font-size: 13px; font-weight: 500;
+    cursor: pointer;
+    transition: all 0.2s;
+    display: flex; align-items: center; gap: 6px;
+
+    &:hover { border-color: #0891B2; color: #0891B2; }
+    &.active { background: #0891B2; color: white; border-color: #0891B2; }
+  }
+}
+
+.tab-count {
+  background: rgba(0,0,0,0.12);
+  border-radius: 10px;
+  padding: 1px 7px;
+  font-size: 11px; font-weight: 700;
+
+  &.pending { background: rgba(232,25,44,0.2); color: #E8192C; }
+}
+
+// ── Grid de cards ─────────────────────────────────────────────
+.couriers-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(360px, 1fr));
+  gap: 16px;
+}
+
+// ── Courier card ──────────────────────────────────────────────
+.courier-card {
+  background: white;
+  border-radius: 14px;
+  box-shadow: 0 2px 10px rgba(0,0,0,0.06);
+  overflow: hidden;
+  transition: box-shadow 0.2s, transform 0.2s;
+
+  &:hover {
+    box-shadow: 0 6px 24px rgba(0,0,0,0.1);
+    transform: translateY(-2px);
+  }
+}
+
+.courier-card-header {
+  display: flex;
+  align-items: center;
+  gap: 12px;
+  padding: 16px 20px;
+  border-bottom: 1px solid #F0F0F0;
+}
+
+.courier-avatar {
+  width: 48px; height: 48px;
+  border-radius: 50%;
+  background: #F0F0F0;
+  overflow: hidden; flex-shrink: 0;
+  display: flex; align-items: center; justify-content: center;
+}
+
+.courier-avatar-img    { width: 100%; height: 100%; object-fit: cover; }
+.courier-avatar-initials {
+  font-size: 16px; font-weight: 700; color: #6B7280;
+}
+
+.courier-identity {
+  flex: 1; overflow: hidden;
+  h3 { margin: 0 0 2px; font-size: 15px; font-weight: 600; color: #1C2833; }
+  p  { margin: 0; font-size: 12px; color: #9CA3AF; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
+}
+
+.statut-chip {
+  padding: 4px 10px;
+  border-radius: 20px;
+  border: 1px solid;
+  font-size: 11px; font-weight: 700;
+  white-space: nowrap; flex-shrink: 0;
+}
+
+.courier-info-row {
+  display: grid;
+  grid-template-columns: repeat(4, 1fr);
+  border-bottom: 1px solid #F5F5F5;
+}
+
+.courier-info {
+  padding: 10px 14px;
+  display: flex; flex-direction: column; gap: 2px;
+  border-right: 1px solid #F5F5F5;
+
+  &:last-child { border-right: none; }
+}
+
+.ci-label { font-size: 10px; font-weight: 600; color: #9CA3AF; text-transform: uppercase; }
+.ci-val   { font-size: 13px; font-weight: 500; color: #1C2833; }
+
+.courier-actions {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  padding: 14px 20px;
+}
+
+.btn-accept {
+  flex: 1; padding: 9px 14px; border-radius: 8px;
+  background: #ECFDF5; color: #059669;
+  border: 1.5px solid #A7F3D0;
+  font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+
+  &:hover:not(:disabled) { background: #059669; color: white; border-color: #059669; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.btn-reject {
+  flex: 1; padding: 9px 14px; border-radius: 8px;
+  background: #FEF2F2; color: #DC2626;
+  border: 1.5px solid #FECACA;
+  font-size: 13px; font-weight: 600; cursor: pointer; transition: all 0.2s;
+
+  &:hover:not(:disabled) { background: #DC2626; color: white; border-color: #DC2626; }
+  &:disabled { opacity: 0.5; cursor: not-allowed; }
+}
+
+.access-granted {
+  font-size: 12px; font-weight: 600; color: #059669;
+  padding: 4px 8px; background: #ECFDF5; border-radius: 6px;
+}
+
+.access-denied {
+  font-size: 12px; font-weight: 600; color: #DC2626;
+  padding: 4px 8px; background: #FEF2F2; border-radius: 6px;
+}
+
+// ── Empty state ───────────────────────────────────────────────
+.empty-state {
+  text-align: center; padding: 60px 0; color: #9CA3AF;
+  span { font-size: 48px; display: block; margin-bottom: 12px; }
+  p    { font-size: 16px; }
+}
+
+// ── Responsive ────────────────────────────────────────────────
+@media (max-width: 600px) {
+  .couriers-grid { grid-template-columns: 1fr; }
+  .courier-info-row { grid-template-columns: 1fr 1fr; }
+  .filter-tabs { gap: 6px; button { padding: 6px 12px; font-size: 12px; } }
+}
+
+// ── Ajouter à la FIN du profile.scss existant ────────────────
+// Le reste du fichier SCSS reste IDENTIQUE à ce que vous avez déjà
+
+// ── Sidebar : bouton Couriers (admin) ─────────────────────────
+.couriers-nav-btn {
+  background: rgba(8, 145, 178, 0.08);
+  color: rgba(255, 255, 255, 0.75);
+  border: 1px solid rgba(8, 145, 178, 0.2);
+  
+  &:hover {
+    background: rgba(8, 145, 178, 0.18);
+    color: white;
+    border-color: rgba(8, 145, 178, 0.4);
+  }
+}

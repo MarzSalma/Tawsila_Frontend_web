@@ -12,7 +12,7 @@ export const routes: Routes = [
     loadComponent: () => import('./features/auth/register/register').then(m => m.Register)
   },
   {
-    path: 'register-merchant', // ✅
+    path: 'register-merchant', 
     loadComponent: () => import('./features/auth/register-merchant/register-merchant').then(m => m.RegisterMerchant)
   },
   {
@@ -43,5 +43,25 @@ export const routes: Routes = [
     path: 'settings',
     loadComponent: () => import('./features/settings/settings').then(m => m.Settings)
   },
+
+
+
+{
+  path: 'admin/all-couriers',
+  loadComponent: () =>
+    import('./features/admin/all_couriers/all_couriers').then(m => m.AllCouriers),
+  canActivate: [adminGuard]  // Guard existant pour l'admin
+},
+
+{
+  path: 'admin/all-merchants',
+  loadComponent: () =>
+    import('./features/admin/all-merchants/all-merchants').then(m => m.AllMerchants),
+  canActivate: [adminGuard]
+},
+
+
+
   { path: '**', redirectTo: '/login' }
+  
 ];
